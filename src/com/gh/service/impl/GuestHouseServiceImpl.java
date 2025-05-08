@@ -155,26 +155,53 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 	@Override
 	public void cancelReservation(int resNum) {
-		// TODO Auto-generated method stub
-
+		boolean find = false;
+		for(Reservation r : reservations) {
+			if(r.getResNum()==resNum) {
+				find = true;
+				System.out.println(r.getResNum()+" 예약을 취소합니다.");
+				reservations.remove(r);
+				break;
+			}
+		}
+		if(find==false) System.out.println("해당 예약이 존재하지 않습니다.");
 	}
 
 	@Override
 	public void removeRoom(int roomNum) {
-		// TODO Auto-generated method stub
-
+		boolean find = false;
+		for(Room r : rooms) {
+			if(r.getRoomNum()==roomNum) {
+				find = true;
+				System.out.println(r.getRoomNum()+" 방을 삭제합니다.");
+				reservations.remove(r);
+				break;
+			}
+		}
+		if(find==false) System.out.println("삭제하려는 방이 존재하지 않습니다.");
 	}
 
 	@Override
 	public void removeEmployee(int empNum) {
-		// TODO Auto-generated method stub
-
+		boolean find = false;
+		for(Employee e : employees) {
+			if(e.getEmpNum()==empNum) {
+				find = true;
+				System.out.println(e.getEmpNum()+" 직원을 삭제합니다.");
+				reservations.remove(e);
+				break;
+			}
+		}
+		if(find==false) System.out.println("해당 직원이 존재하지 않습니다.");
 	}
 
 	@Override
 	public void setDiscount(int roomNum, LocalDate start, LocalDate end, double discountRate) {
-		// TODO Auto-generated method stub
-
+		for(Room r: rooms) {
+			if(r.getRoomNum()==roomNum) {
+				
+			}
+		}
 	}
 
 }
