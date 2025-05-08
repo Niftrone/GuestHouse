@@ -3,7 +3,7 @@ package com.gh.vo.employee;
 import java.time.LocalDate;
 
 public class Employee {
-	static final int empCapacity = 5;
+	public static final int empCapacity = 5;
 	private int empNum;
 	private LocalDate hireDate;
 	private String name;
