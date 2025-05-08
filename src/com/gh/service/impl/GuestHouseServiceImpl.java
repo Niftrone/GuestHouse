@@ -72,12 +72,12 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 	@Override
 	public void addReservation(Reservation reservation) {
-		
+
 		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
 			System.out.println("해당 방은 공사중입니다.");
 			return;
 		}
-		
+
 		for (Reservation r : reservations) {
 			if (r.getResNum() == reservation.getResNum()) {
 				System.out.println("접수 완료된 예약입니다.");
@@ -102,64 +102,70 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	@Override
 	public int getIncome(int month) {
 		List<Reservation> allRes = getReservation(month);
-		int income=0;
-		for(Reservation r : allRes) {
-			int price =(r.getCheckOut().getDayOfMonth()-r.getCheckIn().getDayOfMonth())*r.getResRoom().getPrice();
-			income+=price;
+		int income = 0;
+		for (Reservation r : allRes) {
+			int price = (r.getCheckOut().getDayOfMonth() - r.getCheckIn().getDayOfMonth()) * r.getResRoom().getPrice();
+			income += price;
 		}
 		return income;
 	}
 
 	@Override
-	public List<String> getPopularRoomTypes() {
-		//type Family,Single,Deluxe,Suite,Standard
-	    List<Reservation> allRes = getReservation();
-	    
-	    // 타입별 예약 수를 저장할 Map
-	    Map<String, Integer> typeCountMap = new HashMap<>();
+	public Map<String, Integer> getPopularRoomTypes() {
+		// type Family,Single,Deluxe,Suite,Standard
+		List<Reservation> allRes = getReservation();
 
-	    // 타입 리스트 미리 정의
-	    List<String> roomTypes = Arrays.asList("Family", "Single", "Deluxe", "Suite", "Standard");
+		// 타입별 예약 수를 저장할 Map
+		Map<String, Integer> typeCountMap = new HashMap<>();
 
-	    // 초기화
-	    for (String type : roomTypes) {
-	        typeCountMap.put(type, 0);
-	    }
+		// 타입 리스트 미리 정의
+		List<String> roomTypes = Arrays.asList("Family", "Single", "Deluxe", "Suite", "Standard");
 
-	    // 예약 수 집계
-	    for (Reservation r : allRes) {
-	        String type = r.getResRoom().getType();
-	        typeCountMap.put(type, typeCountMap.getOrDefault(type, 0) + 1);
-	    }
+		// 초기화
+		for (String type : roomTypes) {
+			typeCountMap.put(type, 0);
+		}
 
-	    // 정렬된 타입 리스트 생성 (예약 많은 순)
-	    List<String> sortedTypes = new ArrayList<>(roomTypes);
-	    sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
+		// 예약 수 집계
+		for (Reservation r : allRes) {
+			String type = r.getResRoom().getType();
+			typeCountMap.put(type, typeCountMap.getOrDefault(type, 0) + 1);
+		}
 
-	    return sortedTypes;
+		return typeCountMap;
 	}
 
 	@Override
 	public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Room> room = new ArrayList<>();
+		
+		int count = 0;
+		for(Reservation r : reservations) {
+			if( !(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
+				room.add(rooms.get(count));
+				System.out.println("추가");
+			}
+			count ++;
+		}
+		
+		return room;
 	}
-	
-	//모든 예약 목록을 가져오는 메소드
+
+	// 모든 예약 목록을 가져오는 메소드
 	@Override
 	public List<Reservation> getReservation() {
 		return reservations;
 	}
-	
-	//모든 예약 목록 중 특별한(체크인기준) 달에 해당하는 예약목록을 가져오는 메소드
+
+	// 모든 예약 목록 중 특별한(체크인기준) 달에 해당하는 예약목록을 가져오는 메소드
 	@Override
 	public List<Reservation> getReservation(int month) {
 		List<Reservation> result = new ArrayList<>();
-		for(Reservation r : reservations) {
-			if(r.getCheckIn().getMonthValue()==month) {
+		for (Reservation r : reservations) {
+			if (r.getCheckIn().getMonthValue() == month) {
 				result.add(r);
-			}else {
-				System.out.println(month+" 월에 해당하는 예약이 없습니다.");
+			} else {
+				System.out.println(month + " 월에 해당하는 예약이 없습니다.");
 			}
 		}
 		return result;
@@ -193,7 +199,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			System.out.println("해당 방은 공사중입니다.");
 			return;
 		}
-		
+
 		int count = 0;
 		for (Reservation r : reservations) {
 
@@ -254,50 +260,53 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	@Override
 	public void cancelReservation(int resNum) {
 		boolean find = false;
-		for(Reservation r : reservations) {
-			if(r.getResNum()==resNum) {
+		for (Reservation r : reservations) {
+			if (r.getResNum() == resNum) {
 				find = true;
-				System.out.println(r.getResNum()+" 예약을 취소합니다.");
+				System.out.println(r.getResNum() + " 예약을 취소합니다.");
 				reservations.remove(r);
 				break;
 			}
 		}
-		if(find==false) System.out.println("해당 예약건이 존재하지 않습니다.");
+		if (find == false)
+			System.out.println("해당 예약건이 존재하지 않습니다.");
 	}
 
 	@Override
 	public void removeRoom(int roomNum) {
 		boolean find = false;
-		for(Room r : rooms) {
-			if(r.getRoomNum()==roomNum) {
+		for (Room r : rooms) {
+			if (r.getRoomNum() == roomNum) {
 				find = true;
-				System.out.println(r.getRoomNum()+" 방을 삭제합니다.");
+				System.out.println(r.getRoomNum() + " 방을 삭제합니다.");
 				reservations.remove(r);
 				break;
 			}
 		}
-		if(find==false) System.out.println("삭제하려는 방이 존재하지 않습니다.");
+		if (find == false)
+			System.out.println("삭제하려는 방이 존재하지 않습니다.");
 	}
 
 	@Override
 	public void removeEmployee(int empNum) {
 		boolean find = false;
-		for(Employee e : employees) {
-			if(e.getEmpNum()==empNum) {
+		for (Employee e : employees) {
+			if (e.getEmpNum() == empNum) {
 				find = true;
-				System.out.println(e.getEmpNum()+" 직원을 삭제합니다.");
+				System.out.println(e.getEmpNum() + " 직원을 삭제합니다.");
 				reservations.remove(e);
 				break;
 			}
 		}
-		if(find==false) System.out.println("해당 직원이 존재하지 않습니다.");
+		if (find == false)
+			System.out.println("해당 직원이 존재하지 않습니다.");
 	}
 
 	@Override
 	public void setDiscount(int roomNum, LocalDate start, LocalDate end, double discountRate) {
-		for(Room r: rooms) {
-			if(r.getRoomNum()==roomNum) {
-				
+		for (Room r : rooms) {
+			if (r.getRoomNum() == roomNum) {
+
 			}
 		}
 	}

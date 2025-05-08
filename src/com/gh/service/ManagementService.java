@@ -1,12 +1,12 @@
 package com.gh.service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
 public interface ManagementService {
 	int getIncome(int month);
 
-	List<String> getPopularRoomTypes();
+	Map<String, Integer> getPopularRoomTypes();
 
 	void roomMaintenance(int roomNum, LocalDate start, LocalDate end);
 

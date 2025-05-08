@@ -16,9 +16,9 @@ import com.gh.vo.room.Room;
 public class GHTest {
 
 	static GuestHouseServiceImpl service = GuestHouseServiceImpl.getInstace();
-	
+
 	static List<Room> rooms = new ArrayList<>();
-	
+
 	static List<Employee> empls = new ArrayList<>();
 
 	public static void main(String[] args) {
@@ -28,32 +28,31 @@ public class GHTest {
 
 		System.out.println("게스트 하우스 관리를 진행합니다.\n");
 		while (flag) {
-			System.out.println("1: 직원 추가 2: 방 추가 3: 예약 추가 0: 종료");
+			System.out.println(
+				    "1: 직원 추가 2: 방 추가 3: 예약 추가 4: 모든 예약 정보 5: 특정 월 예약 정보 6: 특정 월 매출 " +
+				    "\n7: 예약 가능한 방 8: 유지보수 예약 9: 예약 수정" +
+				    "\n10: 예약 정보 수정 11: 방 타입 수정 12: 직원 정보 수정 13: 예약 취소 14: 방 삭제 15: 직원 삭제" +
+				    "\n0: 종료");
 			switch (scan.nextInt()) {
-				case 1:
-					addEmployee();
-					break;
-				case 2:
-					addRoom();
-					break;
-				case 3:
-					addReservation();
-					break;
-				case 4:
-					getAllReservation();
-					break;
-				case 5:
-					getReservation(5);
-					break;
-				case 6:
-					getIncome(5);
-					break;
-				case 7:
-					
-				case 0:
-					flag = false;
-					System.out.println("종료");
-			}
+		    case 1: addEmployee(); break;
+		    case 2: addRoom(); break;
+		    case 3: addReservation(); break;
+		    case 4: getAllReservation(); break;
+		    case 5: getReservation(5); break;
+		    case 6: getIncome(5); break;
+		    case 7: getAvailabRooms(); break;
+		    case 8: getMaintenance(); break;
+		    case 9: getUpdateReservation(); break;
+		    case 10: getUpdateReservation(); break;
+		    case 11: getUpdateRoomType(); break;
+		    case 12: getUpdateEmployeeInfo(); break;
+		    case 13: getCancelReservation(); break;
+		    case 14: getRemoveRoom(); break;
+		    case 15: getRemoveEmployee(); break;
+		    case 0:
+		        flag = false;
+		        System.out.println("종료");
+		}
 		}
 	}
 
@@ -80,7 +79,6 @@ public class GHTest {
 	}
 
 	private static void addRoom() {
-		
 
 		rooms.add(new Room(101, 25, 2, false, "Standard", 80000));
 		rooms.add(new Room(102, 30, 3, false, "Deluxe", 100000));
@@ -98,34 +96,82 @@ public class GHTest {
 	private static void addReservation() {
 		List<Reservation> reservations = new ArrayList<>();
 
-		reservations.add(new Reservation(1, LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 3), rooms.get(0), empls.get(0)));
-		reservations.add(new Reservation(2, LocalDate.of(2025, 5, 4), LocalDate.of(2025, 5, 6), rooms.get(1), empls.get(0)));
-		reservations
-				.add(new Reservation(3, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13), rooms.get(2), empls.get(0)));
-		reservations
-				.add(new Reservation(4, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 18), rooms.get(3), empls.get(0)));
-		reservations.add(new Reservation(5, LocalDate.of(2025, 5, 6), LocalDate.of(2025, 5, 8), rooms.get(0), empls.get(0)));
+		reservations.add(
+				new Reservation(1, LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 3), rooms.get(0), empls.get(0)));
+		reservations.add(
+				new Reservation(2, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13), rooms.get(1), empls.get(0)));
+		reservations.add(
+				new Reservation(3, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13), rooms.get(2), empls.get(0)));
+		reservations.add(
+				new Reservation(4, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 18), rooms.get(3), empls.get(0)));
+		reservations.add(
+				new Reservation(5, LocalDate.of(2025, 5, 6), LocalDate.of(2025, 5, 8), rooms.get(0), empls.get(0)));
 
 		for (Reservation r : reservations) {
 			service.addReservation(r);
 		}
 	}
-	
-	private static void getAllReservation(){
+
+	private static void getAllReservation() {
 		List<Reservation> result = service.getReservation();
-		for(Reservation r : result) {
+		for (Reservation r : result) {
 			System.out.println(r);
 		}
 	}
+
 	private static void getReservation(int month) {
 		List<Reservation> result = service.getReservation(month);
-		for(Reservation r : result) {
+		for (Reservation r : result) {
 			System.out.println(r);
 		}
 	}
+
 	public static void getIncome(int month) {
 		int income = service.getIncome(month);
-		
-		System.out.println(month+" 월에 총 매출은 "+income+" 원 입니다.");
+
+		System.out.println(month + " 월에 총 매출은 " + income + " 원 입니다.");
+	}
+
+	private static void getAvailabRooms() {
+		List<Room> rooms = service.getAvailableRooms(LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13));
+		for(int i =0; rooms.size() > i; i++) {
+			System.out.println(rooms.get(i));
+		}
+	}
+	
+	private static void getMaintenance() {
+		service.roomMaintenance(101, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13));
+	}
+	
+	private static void getUpdateReservation() {
+		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 2), LocalDate.of(2025, 5, 4), rooms.get(0), empls.get(0));
+		service.updateReservation(1, updated);
+		System.out.println("예약이 성공적으로 수정되었습니다.");
+	}
+
+	private static void getUpdateRoomType() {
+		service.updateRoomType(105, "Suite");
+		System.out.println("105번 방의 타입이 Suite로 변경되었습니다.");
+	}
+
+	private static void getUpdateEmployeeInfo() {
+		Staff updated = new Staff(2001, LocalDate.of(2021, 3, 15), "이영희", "010-1111-2222", 3000000, Arrays.asList(101, 102));
+		service.updateEmployeeInfo(2001, updated);
+		System.out.println("2001번 직원 정보가 수정되었습니다.");
+	}
+
+	private static void getCancelReservation() {
+		service.cancelReservation(5);
+		System.out.println("예약번호 5번 예약이 취소되었습니다.");
+	}
+
+	private static void getRemoveRoom() {
+		service.removeRoom(107);
+		System.out.println("방 번호 107번이 삭제되었습니다.");
+	}
+
+	private static void getRemoveEmployee() {
+		service.removeEmployee(2003);
+		System.out.println("직원 번호 2003번이 삭제되었습니다.");
 	}
 }
