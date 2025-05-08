@@ -164,7 +164,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				break;
 			}
 		}
-		if(find==false) System.out.println("해당 예약이 존재하지 않습니다.");
+		if(find==false) System.out.println("해당 예약건이 존재하지 않습니다.");
 	}
 
 	@Override
