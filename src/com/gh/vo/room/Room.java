@@ -1,12 +1,16 @@
 package com.gh.vo.room;
 
+import java.time.LocalDate;
+
 public class Room {
 	private int roomNum;
 	private int roomSize;
 	private int capacity;
-	private boolean status;
+	private boolean status = true;
 	private String type;
 	private int price;
+	private LocalDate maintenanceStart;
+	private LocalDate maintenanceEnd;
 
 	public Room() {
 
@@ -67,6 +71,22 @@ public class Room {
 
 	public void setPrice(int price) {
 		this.price = price;
+	}
+	
+	public LocalDate getMaintenanceStart() {
+		return maintenanceStart;
+	}
+	
+	public void setMaintenanceStart(LocalDate maintenanceStart) {
+		this.maintenanceStart = maintenanceStart;
+	}
+	
+	public LocalDate getMaintenanceEnd() {
+		return maintenanceEnd;
+	}
+	
+	public void setMaintenanceEnd(LocalDate maintenanceEnd) {
+		this.maintenanceEnd = maintenanceEnd;
 	}
 
 	@Override
