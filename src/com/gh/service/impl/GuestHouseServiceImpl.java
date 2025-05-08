@@ -131,6 +131,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			String type = r.getResRoom().getType();
 			typeCountMap.put(type, typeCountMap.getOrDefault(type, 0) + 1);
 		}
+//		
+//	    List<String> sortedTypes = new ArrayList<>(roomTypes);
+//	    sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
 
 		return typeCountMap;
 	}
