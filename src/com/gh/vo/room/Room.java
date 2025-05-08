@@ -4,7 +4,7 @@ public class Room {
 	private int roomNum;
 	private int roomSize;
 	private int capacity;
-	private boolean status;
+	private boolean status = true;
 	private String type;
 	private int price;
 
