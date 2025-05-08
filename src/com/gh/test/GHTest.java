@@ -39,7 +39,16 @@ public class GHTest {
 				case 3:
 					addReservation();
 					break;
-					
+				case 4:
+					getAllReservation();
+					break;
+				case 5:
+					getReservation(5);
+					break;
+				case 6:
+					getIncome(5);
+					break;
+				case 7:
 					
 				case 0:
 					flag = false;
@@ -101,5 +110,22 @@ public class GHTest {
 			service.addReservation(r);
 		}
 	}
-
+	
+	private static void getAllReservation(){
+		List<Reservation> result = service.getReservation();
+		for(Reservation r : result) {
+			System.out.println(r);
+		}
+	}
+	private static void getReservation(int month) {
+		List<Reservation> result = service.getReservation(month);
+		for(Reservation r : result) {
+			System.out.println(r);
+		}
+	}
+	public static void getIncome(int month) {
+		int income = service.getIncome(month);
+		
+		System.out.println(month+" 월에 총 매출은 "+income+" 원 입니다.");
+	}
 }

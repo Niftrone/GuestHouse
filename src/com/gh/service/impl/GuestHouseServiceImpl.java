@@ -2,7 +2,10 @@ package com.gh.service.impl;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.gh.service.EmployeeService;
 import com.gh.service.GuestHouseService;
@@ -94,14 +97,42 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 	@Override
 	public int getIncome(int month) {
-		// TODO Auto-generated method stub
-		return 0;
+		List<Reservation> allRes = getReservation(month);
+		int income=0;
+		for(Reservation r : allRes) {
+			int price =(r.getCheckOut().getDayOfMonth()-r.getCheckIn().getDayOfMonth())*r.getResRoom().getPrice();
+			income+=price;
+		}
+		return income;
 	}
 
 	@Override
 	public List<String> getPopularRoomTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		//type Family,Single,Deluxe,Suite,Standard
+	    List<Reservation> allRes = getReservation();
+	    
+	    // 타입별 예약 수를 저장할 Map
+	    Map<String, Integer> typeCountMap = new HashMap<>();
+
+	    // 타입 리스트 미리 정의
+	    List<String> roomTypes = Arrays.asList("Family", "Single", "Deluxe", "Suite", "Standard");
+
+	    // 초기화
+	    for (String type : roomTypes) {
+	        typeCountMap.put(type, 0);
+	    }
+
+	    // 예약 수 집계
+	    for (Reservation r : allRes) {
+	        String type = r.getResRoom().getType();
+	        typeCountMap.put(type, typeCountMap.getOrDefault(type, 0) + 1);
+	    }
+
+	    // 정렬된 타입 리스트 생성 (예약 많은 순)
+	    List<String> sortedTypes = new ArrayList<>(roomTypes);
+	    sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
+
+	    return sortedTypes;
 	}
 
 	@Override
@@ -109,17 +140,25 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	//모든 예약 목록을 가져오는 메소드
 	@Override
 	public List<Reservation> getReservation() {
-		// TODO Auto-generated method stub
-		return null;
+		return reservations;
 	}
-
+	
+	//모든 예약 목록 중 특별한(체크인기준) 달에 해당하는 예약목록을 가져오는 메소드
 	@Override
 	public List<Reservation> getReservation(int month) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Reservation> result = new ArrayList<>();
+		for(Reservation r : reservations) {
+			if(r.getCheckIn().getMonthValue()==month) {
+				result.add(r);
+			}else {
+				System.out.println(month+" 월에 해당하는 예약이 없습니다.");
+			}
+		}
+		return result;
 	}
 
 	/**
