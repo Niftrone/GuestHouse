@@ -70,12 +70,12 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	@Override
 	public void addReservation(Reservation reservation) {
 		
+		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
+			System.out.println("해당 방은 공사중입니다.");
+			return;
+		}
+		
 		for (Reservation r : reservations) {
-
-			if (r.getResRoom().isStatus()) {
-				System.out.println("공사중인 방입니다.");
-			}
-
 			if (r.getResNum() == reservation.getResNum()) {
 				System.out.println("접수 완료된 예약입니다.");
 				return;
@@ -134,6 +134,8 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		for (Room r : rooms) {
 			if (r.getRoomNum() == roomNum) {
 				r.setStatus(true);
+				r.setMaintenanceStart(start);
+				r.setMaintenanceEnd(end);
 				System.out.println(roomNum + " 방이 " + start + " ~ " + end + "까지 수리합니다.");
 				return;
 			}
@@ -148,6 +150,11 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			return;
 		}
 
+		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
+			System.out.println("해당 방은 공사중입니다.");
+			return;
+		}
+		
 		int count = 0;
 		for (Reservation r : reservations) {
 
@@ -229,15 +236,12 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 	}
 
-	private void isMaintenanceCompleted(LocalDate start, LocalDate end) {
-		for(Room r : rooms) {
-			if(r.isStatus()) {
-				if(isDateOverlap(r.getRoomNum(), start, end)) {
-					r.setStatus(false);
-					return;
-				}
-			}
+	private boolean isRoomUnderMaintenance(Room room, LocalDate start, LocalDate end) {
+		if (room == null || room.getMaintenanceStart() == null || room.getMaintenanceEnd() == null) {
+			return false; // 공사 정보가 없으면 공사 아님
 		}
+		// 예약 기간과 공사 기간 겹치는지 확인
+		return !start.isBefore(room.getMaintenanceStart()) && !end.isAfter(room.getMaintenanceEnd());
 	}
 
 	private boolean isDateOverlap(int roomNum, LocalDate start, LocalDate end) {
