@@ -1,5 +1,6 @@
 package com.gh.service.impl;
 
+
 /**
  * <pre>
  * {@code
@@ -12,6 +13,9 @@ package com.gh.service.impl;
  * @since JDK17
  * 
  */
+
+import java.lang.module.ResolutionException;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.gh.excption.DuplicateException;
+import com.gh.excption.NotFoundException;
 import com.gh.service.EmployeeService;
 import com.gh.service.GuestHouseService;
 import com.gh.service.RoomService;
@@ -156,11 +162,12 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @return List<Employee> 모든 직원목록
 	 */
 
-	public List<Employee> getAllEmployees() {
+	public List<Employee> getAllEmployees() throws NotFoundException{
 		if (employees.isEmpty()) {
 			System.out.println("등록된 직원이 없습니다.");
 		}
 		return employees;
+
 
 	}
 	
@@ -168,7 +175,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * 모든 객실목록을 반환하는기능
 	 * @return List<Room> 모든 객실목록
 	 */
-	public List<Room> getAllRooms() {
+
+	public List<Room> getAllRooms() throws NotFoundException{
+
 		if (rooms.isEmpty()) {
 			System.out.println("등록된 객실이 없습니다.");
 		}
@@ -180,7 +189,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @return List<Reservation>모든 예약목록
 	 */
 	@Override
-	public List<Reservation> getReservation() {
+	public List<Reservation> getReservation()throws NotFoundException {
 		return reservations;
 	}
 	

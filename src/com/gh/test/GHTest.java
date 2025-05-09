@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.gh.excption.DuplicateException;
+import com.gh.excption.NotFoundException;
 import com.gh.service.impl.GuestHouseServiceImpl;
 import com.gh.vo.employee.Employee;
 import com.gh.vo.employee.Manager;
@@ -34,6 +36,7 @@ public class GHTest {
 		
 		System.out.println("게스트 하우스 관리를 진행합니다.\n");
 		while (flag) {
+
 			System.out.println(
 				    "1: 직원 추가\t2: 방 추가\t3: 예약 추가\n" +
 				    "4: 방 할인 적용\t5: 전체 예약 조회\t6: 전체 방 조회\n" +
@@ -44,6 +47,7 @@ public class GHTest {
 				    "19: 텍스트파일에 데이터추가\n"+
 				    "0: 종료"
 				);
+
 			switch (scan.nextInt()) {
 
 			case 1:
@@ -160,15 +164,24 @@ public class GHTest {
 				new Reservation(4, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 18), rooms.get(3), empls.get(0)));
 		reservations.add(
 				new Reservation(5, LocalDate.of(2025, 5, 6), LocalDate.of(2025, 5, 8), rooms.get(0), empls.get(0)));
-
-		for (Reservation r : reservations) {
-			service.addReservation(r);
+		
+		try {
+			for (Reservation r : reservations) {
+				service.addReservation(r);
+			}
+		} catch(DuplicateException e) {
+			System.out.println(e.getMessage());
 		}
+
 	}
 
 	private static void getAllReservation() {
 		List<Reservation> result = service.getReservation();
-		result.sort(Comparator.comparing(Reservation :: getCheckIn));
+		try {
+			result.sort(Comparator.comparing(Reservation::getCheckIn));
+		} catch (NotFoundException e) {
+			System.out.println(e.getMessage());
+		}
 		for (Reservation r : result) {
 			System.out.println(r);
 		}
@@ -176,7 +189,11 @@ public class GHTest {
 
 	private static void getReservation(int month) {
 		List<Reservation> result = service.getReservation(month);
-		result.sort(Comparator.comparing(Reservation :: getCheckIn));
+		try {
+			result.sort(Comparator.comparing(Reservation::getCheckIn));
+		} catch (NotFoundException e) {
+			System.out.println(e.getMessage());
+		}
 		for (Reservation r : result) {
 			System.out.println(r);
 		}
@@ -190,7 +207,7 @@ public class GHTest {
 
 	private static void getAvailabRooms() {
 		List<Room> rooms = service.getAvailableRooms(LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13));
-		rooms.sort(Comparator.comparing(Room :: getRoomNum));
+		rooms.sort(Comparator.comparing(Room::getRoomNum));
 		for (int i = 0; rooms.size() > i; i++) {
 			System.out.println(rooms.get(i));
 		}
@@ -231,7 +248,11 @@ public class GHTest {
 
 	private static void getAllEmployees() {
 		List<Employee> empl = service.getAllEmployees();
-		empl.sort(Comparator.comparing(Employee :: getEmpNum));
+		try {
+			empl.sort(Comparator.comparing(Employee::getEmpNum));
+		} catch (NotFoundException e) {
+			System.out.println(e.getMessage());
+		}
 		for (Employee e : empl) {
 			System.out.println(e);
 		}
@@ -239,7 +260,12 @@ public class GHTest {
 
 	private static void getAllRooms() {
 		List<Room> rooms = service.getAllRooms();
-		rooms.sort(Comparator.comparing(Room :: getRoomNum));
+		try {
+			rooms.sort(Comparator.comparing(Room::getRoomNum));
+		} catch (NotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+
 		for (Room r : rooms) {
 			System.out.println(r);
 		}
