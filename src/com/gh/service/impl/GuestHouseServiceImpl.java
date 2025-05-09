@@ -1,5 +1,17 @@
 package com.gh.service.impl;
 
+/**
+ * <pre>
+ * {@code
+ * 	GuestHouseService 클래스는 GuestHouse 정보를 활용하여 각각의 기능을 구현하는 클래스
+ * 	해당클래스에서는 Java Document주석을 달아서 처리했다
+ * }
+ * </pre>
+ * @author 강민기,이우진,함동윤
+ * @version project version 1.0
+ * @since JDK17
+ * 
+ */
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,43 +27,73 @@ import com.gh.vo.reservation.Reservation;
 import com.gh.vo.room.Room;
 
 public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService, RoomService {
-
+	
+	/**
+	 * GuestHouseService를 싱글톤패턴으로 구현
+	 */
 	static private GuestHouseServiceImpl service = new GuestHouseServiceImpl();
-
+	
+	/**
+	 * GuestHouse의 직원정보를 담는 List
+	 */
 	private List<Employee> employees;
+	
+	/**
+	 * GuestHouse의 객실정보를 담는 List
+	 */
 	private List<Room> rooms;
+	
+	/**
+	 * GuestHouse의 예약정보를 담는 List
+	 */
 	private List<Reservation> reservations;
-
+	
+	/**
+	 * GuestHouse의 직원수를 5명으로 제한하기 위한 static 변수
+	 */
 	private int empCapacity = Employee.empCapacity;
+	
+	/**
+	 * GuestHouse의 직원수 파악하기 위한 변수
+	 */
 	private int empCount;
 
+	/**
+	 * GuestHouse의 기본생성자
+	 */
 	private GuestHouseServiceImpl() {
 		employees = new ArrayList<>();
 		rooms = new ArrayList<>();
 		reservations = new ArrayList<>();
 	}
-
+	/**
+	 * GuestHouseService를 싱글톤패턴을 구현하기 위한 public static 메소드
+	 */
 	public static GuestHouseServiceImpl getInstace() {
 		return service;
 	}
 
 	/**
-	 * C
+	 * 객실정보를 받아서 새로운 객실을 추가하는 기능
+	 * @param room 객실정보
 	 */
-
 	@Override
 	public void addRoom(Room room) {
 		for (Room r : rooms) {
 			if (r.getRoomNum() == room.getRoomNum()) {
-				System.out.println("이미 존재한 방입니다.");
+				System.out.println("이미 존재한 객실입니다.");
 				return;
 			}
 		}
 
-		System.out.println("방 등록 완료");
+		System.out.println("객실 등록 완료");
 		rooms.add(room);
 	}
-
+	
+	/**
+	 * 직원정보를 받아서 새로운 직원을 추가하는 기능
+	 * @param employee 직원정보
+	 */
 	@Override
 	public void addEmployee(Employee employee) {
 		if (empCapacity >= empCount) {
@@ -69,12 +111,17 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		employees.add(employee);
 		System.out.println("직원 등록 완료");
 	}
-
+	
+	/**
+	 * 예약정보를 받아서 새로운 예약을 추가하는 기능
+	 * 예약하려는 날짜에 객실이 공사중 or 이미 예약완료된 객실이면 예약을 막아주는 기능
+	 * @param reservation 예약정보
+	 */
 	@Override
 	public void addReservation(Reservation reservation) {
 
 		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
-			System.out.println("해당 방은 공사중입니다.");
+			System.out.println("해당 객실은 공사중입니다.");
 			return;
 		}
 
@@ -86,7 +133,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 			if (isDateOverlap(reservation.getResRoom().getRoomNum(), reservation.getCheckIn(),
 					reservation.getCheckOut())) {
-				System.out.println("이미 예약된 방입니다.");
+				System.out.println("이미 예약된 객실입니다.");
 				return;
 			}
 		}
@@ -97,23 +144,58 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	}
 
 	/**
-	 * R
+	 * 모든 직원목록을 반환하는기능
+	 * @return List<Employee> 모든 직원목록
 	 */
-	
 	public List<Employee> getAllEmployees() {
-	    if (employees.isEmpty()) {
-	        System.out.println("등록된 직원이 없습니다.");
-	    } 
-	    return employees;
+		if (employees.isEmpty()) {
+			System.out.println("등록된 직원이 없습니다.");
+		}
+		return employees;
+	}
+	
+	/**
+	 * 모든 객실목록을 반환하는기능
+	 * @return List<Room> 모든 객실목록
+	 */
+	public List<Room> getAllRooms() {
+		if (rooms.isEmpty()) {
+			System.out.println("등록된 객실이 없습니다.");
+		}
+		return rooms;
 	}
 
-	public List<Room> getAllRooms() {
-	    if (rooms.isEmpty()) {
-	        System.out.println("등록된 방이 없습니다.");
-	    }
-	    return rooms;
+	/**
+	 * 모든 예약목록을 반환하는기능
+	 * @return List<Reservation>모든 예약목록
+	 */
+	@Override
+	public List<Reservation> getReservation() {
+		return reservations;
 	}
 	
+	/**
+	 * 모든 예약목록 중 특정한(체크인기준) 월에 해당하는 예약목록을 반환하는기능
+	 * @return List<Reservation>특정한월 기준 예약정보
+	 */
+	@Override
+	public List<Reservation> getReservation(int month) {
+		List<Reservation> result = new ArrayList<>();
+		for (Reservation r : reservations) {
+			if (r.getCheckIn().getMonthValue() == month) {
+				result.add(r);
+			} else {
+				System.out.println(month + " 월에 해당하는 예약이 없습니다.");
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 월별 매출금액을 반환하는기능
+	 * @param month 조회할 월
+	 * @return int 월 매출금액
+	 */
 	@Override
 	public int getIncome(int month) {
 		List<Reservation> allRes = getReservation(month);
@@ -124,7 +206,11 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		}
 		return income;
 	}
-
+	
+	/**
+	 * 인기있는 객실 type을 반환하는기능
+	 * @return Map<String, Integer> 객실 type 별 예약건수
+	 */
 	@Override
 	public Map<String, Integer> getPopularRoomTypes() {
 		// type Family,Single,Deluxe,Suite,Standard
@@ -152,45 +238,34 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 		return typeCountMap;
 	}
-
+	
+	/**
+	 * 조회한 날짜에 예약가능한 객실을 조회하는 기능
+	 * @param checkIn 체크인날짜
+	 * @param checkOut 체크아웃날짜
+	 * @return List<Room> 조회한 날짜에 이용가능한 객실목록
+	 */
 	@Override
 	public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
 		List<Room> room = new ArrayList<>();
-		
+
 		int count = 0;
-		for(Reservation r : reservations) {
-			if( !(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
+		for (Reservation r : reservations) {
+			if (!(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
 				room.add(rooms.get(count));
 				System.out.println("추가");
 			}
-			count ++;
+			count++;
 		}
-		
+
 		return room;
 	}
 
-	// 모든 예약 목록을 가져오는 메소드
-	@Override
-	public List<Reservation> getReservation() {
-		return reservations;
-	}
-
-	// 모든 예약 목록 중 특별한(체크인기준) 달에 해당하는 예약목록을 가져오는 메소드
-	@Override
-	public List<Reservation> getReservation(int month) {
-		List<Reservation> result = new ArrayList<>();
-		for (Reservation r : reservations) {
-			if (r.getCheckIn().getMonthValue() == month) {
-				result.add(r);
-			} else {
-				System.out.println(month + " 월에 해당하는 예약이 없습니다.");
-			}
-		}
-		return result;
-	}
-
 	/**
-	 * U
+	 * 객실 수리를 위한 객실상태를 이용불가로 제한하는 기능
+	 * @param roomNum 객실번호
+	 * @param start 수리시작날짜
+	 * @param end 수리완료날짜
 	 */
 	@Override
 	public void roomMaintenance(int roomNum, LocalDate start, LocalDate end) {
@@ -199,13 +274,19 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				r.setStatus(true);
 				r.setMaintenanceStart(start);
 				r.setMaintenanceEnd(end);
-				System.out.println(roomNum + " 방이 " + start + " ~ " + end + "까지 수리합니다.");
+				System.out.println(roomNum + " 객실이 " + start + " ~ " + end + "까지 수리합니다.");
 				return;
 			}
 		}
-		System.out.println("해당 방의 번호가 없습니다.");
+		System.out.println("해당 객실의 번호가 없습니다.");
 	}
-
+	
+	/**
+	 * 예약을 변경하는 기능
+	 * 예약변경하려는 날짜에 객실이 공사중 or 이미 예약완료된 객실이면 예약을 막아주는 기능
+	 * @param resNum 예약번호
+	 * @param reservation 예약정보
+	 */
 	@Override
 	public void updateReservation(int resNum, Reservation reservation) {
 		if (reservations == null) {
@@ -214,7 +295,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		}
 
 		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
-			System.out.println("해당 방은 공사중입니다.");
+			System.out.println("해당 객실은 공사중입니다.");
 			return;
 		}
 
@@ -223,7 +304,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 			if (isDateOverlap(reservation.getResRoom().getRoomNum(), reservation.getCheckIn(),
 					reservation.getCheckOut())) {
-				System.out.println("예약이 가능하지 않은 방입니다.");
+				System.out.println("예약이 가능하지 않은 객실입니다.");
 			}
 
 			if (r.getResNum() == resNum) {
@@ -236,24 +317,34 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		}
 
 	}
-
+	
+	/**
+	 * 객실의 type을 변경하는 기능
+	 * @param roomNum 객실번호
+	 * @param newType 객실타입
+	 */
 	@Override
 	public void updateRoomType(int roomNum, String newType) {
 		if (rooms == null) {
-			System.out.println("방이 없습니다");
+			System.out.println("객실이 없습니다");
 			return;
 		}
 
 		for (Room r : rooms) {
 			if (r.getRoomNum() == roomNum) {
-				System.out.println(roomNum + "번 방이 변경 되었습니다.");
+				System.out.println(roomNum + "번 객실이 변경 되었습니다.");
 				r.setType(newType);
 				return;
 			}
 		}
 
 	}
-
+	
+	/**
+	 * 직원의 정보를 변경하는 기능
+	 * @param empNum 객실번호
+	 * @param employee 객실타입
+	 */
 	@Override
 	public void updateEmployeeInfo(int empNum, Employee employee) {
 		if (employees == null) {
@@ -262,9 +353,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		}
 
 		for (int i = 0; employees.size() > i; i++) {
-			if (rooms.get(i).getRoomNum() == empNum) {
+			if (employees.get(i).getEmpNum() == empNum) {
 				employees.set(i, employee);
-				System.out.println("직원 정보가 업데이트되었습니다: " + employee.getName());
+				System.out.println(employee.getName()+" 직원 정보가 업데이트되었습니다");
 				return;
 			}
 		}
@@ -272,9 +363,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	}
 
 	/**
-	 * D
+	 * 예약을 취소하는 기능
+	 * @param resNum 예약번호
 	 */
-
 	@Override
 	public void cancelReservation(int resNum) {
 		boolean find = false;
@@ -289,22 +380,30 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		if (find == false)
 			System.out.println("해당 예약건이 존재하지 않습니다.");
 	}
-
+	
+	/**
+	 * 객실을 삭제하는 기능
+	 * @param roomNum 객실번호
+	 */
 	@Override
 	public void removeRoom(int roomNum) {
 		boolean find = false;
 		for (Room r : rooms) {
 			if (r.getRoomNum() == roomNum) {
 				find = true;
-				System.out.println(r.getRoomNum() + " 방을 삭제합니다.");
-				reservations.remove(r);
+				System.out.println(r.getRoomNum() + " 객실을 삭제합니다.");
+				rooms.remove(r);
 				break;
 			}
 		}
 		if (find == false)
-			System.out.println("삭제하려는 방이 존재하지 않습니다.");
+			System.out.println("삭제하려는 객실이 존재하지 않습니다.");
 	}
-
+	
+	/**
+	 * 직원을 삭제하는 기능
+	 * @param empNum 직원번호
+	 */
 	@Override
 	public void removeEmployee(int empNum) {
 		boolean find = false;
@@ -312,14 +411,21 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			if (e.getEmpNum() == empNum) {
 				find = true;
 				System.out.println(e.getEmpNum() + " 직원을 삭제합니다.");
-				reservations.remove(e);
+				employees.remove(e);
 				break;
 			}
 		}
 		if (find == false)
 			System.out.println("해당 직원이 존재하지 않습니다.");
 	}
-
+	
+	/**
+	 * 객실을 일정기간동안 가격할인을 하는기능
+	 * @param roomNum 직원번호
+	 * @param start 할인시작일
+	 * @param end 할인종료일
+	 * @param discountRate 할인률
+	 */
 	@Override
 	public void setDiscount(int roomNum, LocalDate start, LocalDate end, double discountRate) {
 		for (Room r : rooms) {
@@ -328,23 +434,32 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			}
 		}
 	}
-
+	
+	/**
+	 * 객실의 수리를 하기 위해 객실상태를 변경하는 기능
+	 * @param room 객실정보
+	 * @param start 수리시작일
+	 * @param end 수리종료일
+	 */
 	private boolean isRoomUnderMaintenance(Room room, LocalDate start, LocalDate end) {
 		if (room == null || room.getMaintenanceStart() == null || room.getMaintenanceEnd() == null) {
-			return false; // 공사 정보가 없으면 공사 아님
+			return false; // 수리 정보가 없으면 공사 아님
 		}
-		// 예약 기간과 공사 기간 겹치는지 확인
+		// 예약 기간과 수리 기간 겹치는지 확인
 		return !start.isBefore(room.getMaintenanceStart()) && !end.isAfter(room.getMaintenanceEnd());
 	}
 
 	/**
-	 * 백준 1374강의실 문제를 활용한 풀이
-	 * 예약 시스템에 중복 예약을 방지하는 알고리즘 적용 
-	 * */
-	private boolean isDateOverlap(int roomNum, LocalDate start, LocalDate end) {
+	 * 객실의 중복예약을 방지하는 기능
+	 * 백준 1374강의실 문제를 활용한 풀이 예약 시스템에 중복 예약을 방지하는 알고리즘 적용
+	 * @param roomNum 객실번호
+	 * @param checkIn 체크인날짜
+	 * @param checkOut 체크아웃날짜
+	 */
+	private boolean isDateOverlap(int roomNum, LocalDate checkIn, LocalDate checkOut) {
 		for (Reservation r : reservations) {
 			if (r.getResRoom().getRoomNum() == roomNum) {
-				if (r.getCheckIn().isBefore(end) && r.getCheckOut().isAfter(start)) {
+				if (r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn)) {
 					return true;
 				}
 			}

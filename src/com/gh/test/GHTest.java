@@ -1,5 +1,8 @@
 package com.gh.test;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +23,12 @@ public class GHTest {
 	static List<Room> rooms = new ArrayList<>();
 
 	static List<Employee> empls = new ArrayList<>();
+	static Scanner scan = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException{
 
 		boolean flag = true;
-		Scanner scan = new Scanner(System.in);
-
+		
 		System.out.println("게스트 하우스 관리를 진행합니다.\n");
 		while (flag) {
 			System.out.println(
@@ -51,7 +54,9 @@ public class GHTest {
 		    case 14: getRemoveRoom(); break;
 		    case 15: getRemoveEmployee(); break;
 		    case 16: getAllEmployees(); break;
-		    case 17: getAllRooms();; break;
+		    case 17: getAllRooms(); break;
+		    case 100 : test(); break;
+		
 		    case 0:
 		        flag = false;
 		        System.out.println("종료");
@@ -189,7 +194,37 @@ public class GHTest {
 			System.out.println(r);
 		}
 	}
-
+	private static void test() throws IOException{
+		String rootPath = System.getProperty("user.dir");
+		System.out.println(rootPath);
+		File file = new File(rootPath+"\\file.txt");
+		if(!file.exists())
+			file.createNewFile();
+		FileWriter fw = new FileWriter(file,true);
+	    System.out.println("사원번호등록 : ");
+		int empnum = scan.nextInt();
+		System.out.println("입사일 : ");
+		int year = scan.nextInt();
+		int month = scan.nextInt();
+		int day = scan.nextInt();
+		LocalDate.of(year, month, day);
+		System.out.println("이름 : ");
+		String name = scan.next();
+		System.out.println("전화번호 : ");
+		String phoneNum = scan.next();
+		System.out.println("월급 : ");
+		int salary=scan.nextInt();
+		System.out.println("보너스 : ");
+		int bonus = scan.nextInt();
+		System.out.println("등급 : ");
+		int grade = scan.nextInt();
+		Manager manager0 = new Manager(empnum, LocalDate.of(year, month, day), name, phoneNum, salary, bonus, grade);
+		System.out.println(manager0);
+		fw.write(manager0.toString());
+		fw.write("\n");
+		fw.flush();
+		fw.close();
+	}
 	
 	
 }
