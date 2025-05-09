@@ -99,6 +99,21 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	/**
 	 * R
 	 */
+	
+	public List<Employee> getAllEmployees() {
+	    if (employees.isEmpty()) {
+	        System.out.println("등록된 직원이 없습니다.");
+	    } 
+	    return employees;
+	}
+
+	public List<Room> getAllRooms() {
+	    if (rooms.isEmpty()) {
+	        System.out.println("등록된 방이 없습니다.");
+	    }
+	    return rooms;
+	}
+	
 	@Override
 	public int getIncome(int month) {
 		List<Reservation> allRes = getReservation(month);
@@ -322,6 +337,10 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		return !start.isBefore(room.getMaintenanceStart()) && !end.isAfter(room.getMaintenanceEnd());
 	}
 
+	/**
+	 * 백준 1374강의실 문제를 활용한 풀이
+	 * 예약 시스템에 중복 예약을 방지하는 알고리즘 적용 
+	 * */
 	private boolean isDateOverlap(int roomNum, LocalDate start, LocalDate end) {
 		for (Reservation r : reservations) {
 			if (r.getResRoom().getRoomNum() == roomNum) {

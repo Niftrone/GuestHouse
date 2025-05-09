@@ -32,6 +32,7 @@ public class GHTest {
 				    "1: 직원 추가 2: 방 추가 3: 예약 추가 4: 모든 예약 정보 5: 특정 월 예약 정보 6: 특정 월 매출 " +
 				    "\n7: 예약 가능한 방 8: 유지보수 예약 9: 예약 수정" +
 				    "\n10: 예약 정보 수정 11: 방 타입 수정 12: 직원 정보 수정 13: 예약 취소 14: 방 삭제 15: 직원 삭제" +
+				    "\n 16: 전체 직원 17: 전체 방" +
 				    "\n0: 종료");
 			switch (scan.nextInt()) {
 		    case 1: addEmployee(); break;
@@ -49,6 +50,8 @@ public class GHTest {
 		    case 13: getCancelReservation(); break;
 		    case 14: getRemoveRoom(); break;
 		    case 15: getRemoveEmployee(); break;
+		    case 16: getAllEmployees(); break;
+		    case 17: getAllRooms();; break;
 		    case 0:
 		        flag = false;
 		        System.out.println("종료");
@@ -174,4 +177,19 @@ public class GHTest {
 		service.removeEmployee(2003);
 		System.out.println("직원 번호 2003번이 삭제되었습니다.");
 	}
+	private static void getAllEmployees() {
+		List<Employee> empl = service.getAllEmployees();
+		for(Employee e : empl) {
+			System.out.println(e);
+		}
+	}
+	private static void getAllRooms() {
+		List<Room> rooms = service.getAllRooms();
+		for(Room r : rooms) {
+			System.out.println(r);
+		}
+	}
+
+	
+	
 }
