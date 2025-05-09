@@ -30,26 +30,19 @@ public class GHTest {
 	static List<Employee> empls = new ArrayList<>();
 	static Scanner scan = new Scanner(System.in);
 
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException {
 
 		boolean flag = true;
-		
+
 		System.out.println("게스트 하우스 관리를 진행합니다.\n");
 		while (flag) {
 
-			System.out.println(
-				    "1: 직원 추가\t2: 방 추가\t3: 예약 추가\n" +
-				    "4: 방 할인 적용\t5: 전체 예약 조회\t6: 전체 방 조회\n" +
-				    "7: 전체 직원 조회\t8: 특정 월 예약 조회\t9: 예약 가능한 방 조회\n" +
-				    "10: 인기타입 조회\t"+"11: 예약 정보 수정\t12: 방 타입 수정\n"+
-				    "13: 직원 정보 수정\t" +"14: 특정 월 매출 조회\t15: 유지보수 예약\n"+
-				    "16: 예약 취소\t" +"17: 방 삭제\t18: 직원 삭제\n"+
-				    "19: 텍스트파일에 데이터추가\n"+
-				    "0: 종료"
-				);
+			System.out.println("1: 직원 추가\t2: 방 추가\t3: 예약 추가\n" + "4: 방 할인 적용\t5: 전체 예약 조회\t6: 전체 방 조회\n"
+					+ "7: 전체 직원 조회\t8: 특정 월 예약 조회\t9: 예약 가능한 방 조회\n" + "10: 인기타입 조회\t" + "11: 예약 정보 수정\t12: 방 타입 수정\n"
+					+ "13: 직원 정보 수정\t" + "14: 특정 월 매출 조회\t15: 유지보수 예약\n" + "16: 예약 취소\t" + "17: 방 삭제\t18: 직원 삭제\n"
+					+ "19: 텍스트파일에 데이터추가\n" + "0: 종료");
 
 			switch (scan.nextInt()) {
-
 			case 1:
 				addEmployee();
 				break;
@@ -164,12 +157,52 @@ public class GHTest {
 				new Reservation(4, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 18), rooms.get(3), empls.get(0)));
 		reservations.add(
 				new Reservation(5, LocalDate.of(2025, 5, 6), LocalDate.of(2025, 5, 8), rooms.get(0), empls.get(0)));
-		
+		reservations.add(
+				new Reservation(6, LocalDate.of(2025, 5, 20), LocalDate.of(2025, 5, 22), rooms.get(4), empls.get(0)));
+		reservations.add(
+				new Reservation(7, LocalDate.of(2025, 5, 25), LocalDate.of(2025, 5, 27), rooms.get(5), empls.get(0)));
+		reservations.add(
+				new Reservation(8, LocalDate.of(2025, 5, 28), LocalDate.of(2025, 5, 30), rooms.get(6), empls.get(0)));
+		reservations.add(
+				new Reservation(9, LocalDate.of(2025, 5, 3), LocalDate.of(2025, 5, 5), rooms.get(1), empls.get(0)));
+		reservations.add(
+				new Reservation(10, LocalDate.of(2025, 5, 7), LocalDate.of(2025, 5, 9), rooms.get(2), empls.get(0)));
+		reservations.add(
+				new Reservation(11, LocalDate.of(2025, 5, 11), LocalDate.of(2025, 5, 12), rooms.get(3), empls.get(0)));
+		reservations.add(
+				new Reservation(12, LocalDate.of(2025, 5, 16), LocalDate.of(2025, 5, 18), rooms.get(4), empls.get(0)));
+		reservations.add(
+				new Reservation(13, LocalDate.of(2025, 5, 22), LocalDate.of(2025, 5, 24), rooms.get(5), empls.get(0)));
+		reservations.add(
+				new Reservation(14, LocalDate.of(2025, 5, 26), LocalDate.of(2025, 5, 27), rooms.get(6), empls.get(0)));
+
+		reservations.add(
+				new Reservation(15, LocalDate.of(2025, 6, 1), LocalDate.of(2025, 6, 3), rooms.get(0), empls.get(0)));
+		reservations.add(
+				new Reservation(16, LocalDate.of(2025, 6, 4), LocalDate.of(2025, 6, 6), rooms.get(1), empls.get(0)));
+		reservations.add(
+				new Reservation(17, LocalDate.of(2025, 6, 7), LocalDate.of(2025, 6, 9), rooms.get(2), empls.get(0)));
+		reservations.add(
+				new Reservation(18, LocalDate.of(2025, 6, 10), LocalDate.of(2025, 6, 12), rooms.get(3), empls.get(0)));
+		reservations.add(
+				new Reservation(19, LocalDate.of(2025, 6, 13), LocalDate.of(2025, 6, 15), rooms.get(4), empls.get(0)));
+		reservations.add(
+				new Reservation(20, LocalDate.of(2025, 6, 16), LocalDate.of(2025, 6, 18), rooms.get(5), empls.get(0)));
+		reservations.add(
+				new Reservation(21, LocalDate.of(2025, 6, 19), LocalDate.of(2025, 6, 21), rooms.get(6), empls.get(0)));
+		reservations.add(
+				new Reservation(22, LocalDate.of(2025, 6, 22), LocalDate.of(2025, 6, 24), rooms.get(0), empls.get(0)));
+		reservations.add(
+				new Reservation(23, LocalDate.of(2025, 6, 25), LocalDate.of(2025, 6, 27), rooms.get(1), empls.get(0)));
+		reservations.add(
+				new Reservation(24, LocalDate.of(2025, 6, 28), LocalDate.of(2025, 6, 29), rooms.get(2), empls.get(0)));
+		reservations.add(
+				new Reservation(25, LocalDate.of(2025, 6, 29), LocalDate.of(2025, 6, 30), rooms.get(3), empls.get(0)));
 		try {
 			for (Reservation r : reservations) {
 				service.addReservation(r);
 			}
-		} catch(DuplicateException e) {
+		} catch (DuplicateException e) {
 			System.out.println(e.getMessage());
 		}
 
@@ -179,11 +212,12 @@ public class GHTest {
 		List<Reservation> result = service.getReservation();
 		try {
 			result.sort(Comparator.comparing(Reservation::getCheckIn));
+
+			for (Reservation r : result) {
+				System.out.println(r);
+			}
 		} catch (NotFoundException e) {
 			System.out.println(e.getMessage());
-		}
-		for (Reservation r : result) {
-			System.out.println(r);
 		}
 	}
 
@@ -191,11 +225,11 @@ public class GHTest {
 		List<Reservation> result = service.getReservation(month);
 		try {
 			result.sort(Comparator.comparing(Reservation::getCheckIn));
+			for (Reservation r : result) {
+				System.out.println(r);
+			}
 		} catch (NotFoundException e) {
 			System.out.println(e.getMessage());
-		}
-		for (Reservation r : result) {
-			System.out.println(r);
 		}
 	}
 
@@ -247,46 +281,46 @@ public class GHTest {
 	}
 
 	private static void getAllEmployees() {
-		List<Employee> empl = service.getAllEmployees();
 		try {
+			List<Employee> empl = service.getAllEmployees();
 			empl.sort(Comparator.comparing(Employee::getEmpNum));
+			for (Employee e : empl) {
+				System.out.println(e);
+			}
 		} catch (NotFoundException e) {
 			System.out.println(e.getMessage());
 		}
-		for (Employee e : empl) {
-			System.out.println(e);
-		}
+
 	}
 
 	private static void getAllRooms() {
-		List<Room> rooms = service.getAllRooms();
 		try {
+			List<Room> rooms = service.getAllRooms();
 			rooms.sort(Comparator.comparing(Room::getRoomNum));
+			for (Room r : rooms) {
+				System.out.println(r);
+			}
 		} catch (NotFoundException e) {
 			System.out.println(e.getMessage());
 		}
-
-		for (Room r : rooms) {
-			System.out.println(r);
-		}
 	}
-	
+
 	private static void getPopularRoomTypes() {
 		Map<String, Integer> typeCountMap = service.getPopularRoomTypes();
 		List<String> roomTypes = Arrays.asList("Family", "Single", "Deluxe", "Suite", "Standard");
-	    List<String> sortedTypes = new ArrayList<>(roomTypes);
-	    sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
-	    System.out.println(sortedTypes.getFirst()+" type 객실이 가장 인기가 많습니다.");
+		List<String> sortedTypes = new ArrayList<>(roomTypes);
+		sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
+		System.out.println(sortedTypes.get(0) + " type 객실이 가장 인기가 많습니다.");
 	}
 
-	private static void addFileWriter() throws IOException{
+	private static void addFileWriter() throws IOException {
 		String rootPath = System.getProperty("user.dir");
 		System.out.println(rootPath);
-		File file = new File(rootPath+"\\GH.txt");
-		if(!file.exists())
+		File file = new File(rootPath + "\\GH.txt");
+		if (!file.exists())
 			file.createNewFile();
-		FileWriter fw = new FileWriter(file,true);
-	    System.out.print("사원번호등록 : ");
+		FileWriter fw = new FileWriter(file, true);
+		System.out.print("사원번호등록 : ");
 		int empnum = scan.nextInt();
 		System.out.print("입사년도 : ");
 		int year = scan.nextInt();
@@ -300,7 +334,7 @@ public class GHTest {
 		System.out.print("전화번호 : ");
 		String phoneNum = scan.next();
 		System.out.print("월급 : ");
-		int salary=scan.nextInt();
+		int salary = scan.nextInt();
 		System.out.print("보너스 : ");
 		int bonus = scan.nextInt();
 		System.out.print("등급 : ");
@@ -320,6 +354,5 @@ public class GHTest {
 		service.setDiscount(104, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 30), 0.15);
 		System.out.println("101 ~ 104 번방이 5월 15 ~ 30일까지 15% 할인합니다.");
 	}
-
 
 }

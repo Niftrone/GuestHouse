@@ -89,11 +89,10 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @param room 객실정보
 	 */
 	@Override
-	public void addRoom(Room room) {
+	public void addRoom(Room room) throws DuplicateException{
 		for (Room r : rooms) {
 			if (r.getRoomNum() == room.getRoomNum()) {
-				System.out.println("이미 존재한 객실입니다.");
-				return;
+				throw new DuplicateException("이미 존재한 객실입니다.");
 			}
 		}
 
@@ -106,12 +105,11 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @param employee 직원정보
 	 */
 	@Override
-	public void addEmployee(Employee employee) {
+	public void addEmployee(Employee employee) throws DuplicateException{
 		if (empCapacity >= empCount) {
 			for (Employee e : employees) {
 				if (e.getEmpNum() == employee.getEmpNum()) {
-					System.out.println("이미 존재한 직원입니다.");
-					return;
+					throw new DuplicateException("이미 존재한 직원입니다.");
 				}
 			}
 		} else {
@@ -129,7 +127,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @param reservation 예약정보
 	 */
 	@Override
-	public void addReservation(Reservation reservation) {
+	public void addReservation(Reservation reservation) throws DuplicateException {
 		
 		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
 			System.out.println("해당 객실은 공사중입니다.");
@@ -144,8 +142,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 			if (isDateOverlap(reservation.getResRoom().getRoomNum(), reservation.getCheckIn(),
 					reservation.getCheckOut())) {
-				System.out.println("이미 예약된 객실입니다.");
-				return;
+				throw new DuplicateException("이미 예약된 예약입니다.");
 			}
 		}
 		
@@ -164,7 +161,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 	public List<Employee> getAllEmployees() throws NotFoundException{
 		if (employees.isEmpty()) {
-			System.out.println("등록된 직원이 없습니다.");
+			throw new NotFoundException("등록된 직원이 없습니다.");
 		}
 		return employees;
 
@@ -177,9 +174,8 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 
 	public List<Room> getAllRooms() throws NotFoundException{
-
 		if (rooms.isEmpty()) {
-			System.out.println("등록된 객실이 없습니다.");
+			 throw new NotFoundException("등록된 객실이 없습니다.");
 		}
 		return rooms;
 	}
@@ -190,6 +186,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 	@Override
 	public List<Reservation> getReservation()throws NotFoundException {
+		if(reservations == null) {
+			throw new NotFoundException("등록된 예약이 없습니다.");
+		}
 		return reservations;
 	}
 	
@@ -270,7 +269,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	@Override
 	public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
 		List<Room> room = new ArrayList<>();
-
+		
 		int count = 0;
 		for (Reservation r : reservations) {
 			if (!(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
