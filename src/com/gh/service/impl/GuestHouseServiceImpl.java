@@ -1,5 +1,6 @@
 package com.gh.service.impl;
 
+import java.lang.module.ResolutionException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.gh.excption.DuplicateException;
+import com.gh.excption.NotFoundException;
 import com.gh.service.EmployeeService;
 import com.gh.service.GuestHouseService;
 import com.gh.service.RoomService;
@@ -104,14 +107,14 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * R
 	 */
 
-	public List<Employee> getAllEmployees() {
+	public List<Employee> getAllEmployees() throws NotFoundException{
 		if (employees.isEmpty()) {
 			System.out.println("등록된 직원이 없습니다.");
 		}
 		return employees;
 	}
 
-	public List<Room> getAllRooms() {
+	public List<Room> getAllRooms() throws NotFoundException{
 		if (rooms.isEmpty()) {
 			System.out.println("등록된 방이 없습니다.");
 		}
@@ -179,7 +182,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 	// 모든 예약 목록을 가져오는 메소드
 	@Override
-	public List<Reservation> getReservation() {
+	public List<Reservation> getReservation() throws NotFoundException{
 		return reservations;
 	}
 

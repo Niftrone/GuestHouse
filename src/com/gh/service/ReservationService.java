@@ -1,5 +1,7 @@
 package com.gh.service;
 
+import java.io.IOException;
+
 import com.gh.vo.reservation.Reservation;
 
 public interface ReservationService {
