@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,40 +33,76 @@ public class GHTest {
 		System.out.println("게스트 하우스 관리를 진행합니다.\n");
 		while (flag) {
 			System.out.println(
-				    "1: 직원 추가 2: 방 추가 3: 예약 추가 4: 모든 예약 정보 5: 특정 월 예약 정보 6: 특정 월 매출 " +
-				    "\n7: 예약 가능한 방 8: 유지보수 예약 9: 예약 수정" +
-				    "\n10: 예약 정보 수정 11: 방 타입 수정 12: 직원 정보 수정 13: 예약 취소 14: 방 삭제 15: 직원 삭제" +
-				    "\n 16: 전체 직원 17: 전체 방" +
-				    "\n0: 종료");
+				    "1: 직원 추가\t\t2: 방 추가\t\t3: 예약 추가\n" +
+				    "4: 방 할인 적용\t5: 전체 예약 조회\t6: 전체 방 조회\n" +
+				    "7: 전체 직원 조회\t8: 특정 월 예약 조회\t9: 예약 가능한 방 조회\n" +
+				    "10: 예약 정보 수정\t11: 방 타입 수정\t12: 직원 정보 수정\n" +
+				    "13: 특정 월 매출 조회\t14: 유지보수 예약\t15: 예약 취소\n" +
+				    "16: 방 삭제\t\t17: 직원 삭제\n" +
+				    "0: 종료"
+				);
 			switch (scan.nextInt()) {
-		    case 1: addEmployee(); break;
-		    case 2: addRoom(); break;
-		    case 3: addReservation(); break;
-		    case 4: getAllReservation(); break;
-		    case 5: getReservation(5); break;
-		    case 6: getIncome(5); break;
-		    case 7: getAvailabRooms(); break;
-		    case 8: getMaintenance(); break;
-		    case 9: getUpdateReservation(); break;
-		    case 10: getUpdateReservation(); break;
-		    case 11: getUpdateRoomType(); break;
-		    case 12: getUpdateEmployeeInfo(); break;
-		    case 13: getCancelReservation(); break;
-		    case 14: getRemoveRoom(); break;
-		    case 15: getRemoveEmployee(); break;
-		    case 16: getAllEmployees(); break;
-		    case 17: getAllRooms(); break;
-		    case 100 : test(); break;
-		
-		    case 0:
-		        flag = false;
-		        System.out.println("종료");
-		}
+
+			case 1:
+				addEmployee();
+				break;
+			case 2:
+				addRoom();
+				break;
+			case 3:
+				addReservation();
+				break;
+			case 4:
+				setDiscount();
+				break;
+			case 5:
+				getAllReservation();
+				break;
+			case 6:
+				getAllRooms();
+				break;
+			case 7:
+				getAllEmployees();
+				break;
+			case 8:
+				getReservation(5);
+				break;
+			case 9:
+				getAvailabRooms();
+				break;
+			case 10:
+				updateReservation();
+				break;
+			case 11:
+				updateRoomType();
+				break;
+			case 12:
+				updateEmployeeInfo();
+				break;
+			case 13:
+				getIncome(5);
+				break;
+			case 14:
+				setMaintenance();
+				break;
+			case 15:
+				cancelReservation();
+				break;
+			case 16:
+				removeRoom();
+				break;
+			case 17:
+				removeEmployee();
+				break;
+			case 0:
+				flag = false;
+				System.out.println("종료");
+			}
+
 		}
 	}
 
 	private static void addEmployee() {
-
 		Manager manager = new Manager(1001, LocalDate.of(2020, 5, 10), "김지훈", "010-1234-5678", 5000000, 1000000, 1);
 		Staff staff1 = new Staff(2001, LocalDate.of(2021, 3, 15), "이영희", "010-1111-2222", 3000000,
 				Arrays.asList(101, 102));
@@ -107,7 +144,7 @@ public class GHTest {
 		reservations.add(
 				new Reservation(1, LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 3), rooms.get(0), empls.get(0)));
 		reservations.add(
-				new Reservation(2, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13), rooms.get(1), empls.get(0)));
+				new Reservation(2, LocalDate.of(2025, 5, 18), LocalDate.of(2025, 5, 19), rooms.get(1), empls.get(0)));
 		reservations.add(
 				new Reservation(3, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13), rooms.get(2), empls.get(0)));
 		reservations.add(
@@ -122,6 +159,7 @@ public class GHTest {
 
 	private static void getAllReservation() {
 		List<Reservation> result = service.getReservation();
+		result.sort(Comparator.comparing(Reservation :: getCheckIn));
 		for (Reservation r : result) {
 			System.out.println(r);
 		}
@@ -129,6 +167,7 @@ public class GHTest {
 
 	private static void getReservation(int month) {
 		List<Reservation> result = service.getReservation(month);
+		result.sort(Comparator.comparing(Reservation :: getCheckIn));
 		for (Reservation r : result) {
 			System.out.println(r);
 		}
@@ -142,58 +181,66 @@ public class GHTest {
 
 	private static void getAvailabRooms() {
 		List<Room> rooms = service.getAvailableRooms(LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13));
-		for(int i =0; rooms.size() > i; i++) {
+		rooms.sort(Comparator.comparing(Room :: getRoomNum));
+		for (int i = 0; rooms.size() > i; i++) {
 			System.out.println(rooms.get(i));
 		}
 	}
-	
-	private static void getMaintenance() {
+
+	private static void setMaintenance() {
 		service.roomMaintenance(101, LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13));
 	}
-	
-	private static void getUpdateReservation() {
-		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 2), LocalDate.of(2025, 5, 4), rooms.get(0), empls.get(0));
+
+	private static void updateReservation() {
+		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 2), LocalDate.of(2025, 5, 4), rooms.get(0),
+				empls.get(0));
 		service.updateReservation(1, updated);
 		System.out.println("예약이 성공적으로 수정되었습니다.");
 	}
 
-	private static void getUpdateRoomType() {
+	private static void updateRoomType() {
 		service.updateRoomType(105, "Suite");
 		System.out.println("105번 방의 타입이 Suite로 변경되었습니다.");
 	}
 
-	private static void getUpdateEmployeeInfo() {
-		Staff updated = new Staff(2001, LocalDate.of(2021, 3, 15), "이영희", "010-1111-2222", 3000000, Arrays.asList(101, 102));
+	private static void updateEmployeeInfo() {
+		Staff updated = new Staff(2001, LocalDate.of(2021, 3, 15), "이영희", "010-1111-2222", 3000000,
+				Arrays.asList(101, 102));
 		service.updateEmployeeInfo(2001, updated);
 		System.out.println("2001번 직원 정보가 수정되었습니다.");
 	}
 
-	private static void getCancelReservation() {
+	private static void cancelReservation() {
 		service.cancelReservation(5);
 		System.out.println("예약번호 5번 예약이 취소되었습니다.");
 	}
 
-	private static void getRemoveRoom() {
+	private static void removeRoom() {
 		service.removeRoom(107);
 		System.out.println("방 번호 107번이 삭제되었습니다.");
 	}
 
-	private static void getRemoveEmployee() {
+	private static void removeEmployee() {
 		service.removeEmployee(2003);
 		System.out.println("직원 번호 2003번이 삭제되었습니다.");
 	}
+
 	private static void getAllEmployees() {
 		List<Employee> empl = service.getAllEmployees();
-		for(Employee e : empl) {
+		empl.sort(Comparator.comparing(Employee :: getEmpNum));
+		for (Employee e : empl) {
 			System.out.println(e);
 		}
 	}
+
 	private static void getAllRooms() {
 		List<Room> rooms = service.getAllRooms();
-		for(Room r : rooms) {
+		rooms.sort(Comparator.comparing(Room :: getRoomNum));
+		for (Room r : rooms) {
 			System.out.println(r);
 		}
 	}
+
 	private static void test() throws IOException{
 		String rootPath = System.getProperty("user.dir");
 		System.out.println(rootPath);
@@ -227,4 +274,15 @@ public class GHTest {
 	}
 	
 	
+
+
+	private static void setDiscount() {
+		service.setDiscount(101, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 30), 0.15);
+		service.setDiscount(102, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 30), 0.15);
+		service.setDiscount(103, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 30), 0.15);
+		service.setDiscount(104, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 30), 0.15);
+		System.out.println("101 ~ 104 번방이 5월 15 ~ 30일까지 15% 할인합니다.");
+	}
+
+
 }

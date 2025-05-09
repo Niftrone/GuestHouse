@@ -47,10 +47,15 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * GuestHouse의 예약정보를 담는 List
 	 */
 	private List<Reservation> reservations;
+
 	
 	/**
 	 * GuestHouse의 직원수를 5명으로 제한하기 위한 static 변수
 	 */
+
+	private Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
+
+
 	private int empCapacity = Employee.empCapacity;
 	
 	/**
@@ -107,7 +112,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			System.out.println("직원 최대 고용");
 			return;
 		}
-
+		empCount ++;
 		employees.add(employee);
 		System.out.println("직원 등록 완료");
 	}
@@ -119,7 +124,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 	@Override
 	public void addReservation(Reservation reservation) {
-
+		
 		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
 			System.out.println("해당 객실은 공사중입니다.");
 			return;
@@ -137,6 +142,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				return;
 			}
 		}
+		
+		int finalPrice = discountedPrice(reservation);
+		reservation.setTotalPrice(finalPrice);
 
 		reservations.add(reservation);
 		System.out.println("예약 완료되었습니다.");
@@ -147,11 +155,13 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * 모든 직원목록을 반환하는기능
 	 * @return List<Employee> 모든 직원목록
 	 */
+
 	public List<Employee> getAllEmployees() {
 		if (employees.isEmpty()) {
 			System.out.println("등록된 직원이 없습니다.");
 		}
 		return employees;
+
 	}
 	
 	/**
@@ -196,13 +206,19 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @param month 조회할 월
 	 * @return int 월 매출금액
 	 */
+
+
 	@Override
 	public int getIncome(int month) {
 		List<Reservation> allRes = getReservation(month);
 		int income = 0;
+		
 		for (Reservation r : allRes) {
-			int price = (r.getCheckOut().getDayOfMonth() - r.getCheckIn().getDayOfMonth()) * r.getResRoom().getPrice();
-			income += price;
+			if(r.getTotalPrice() == 0) {
+				int finalPrice = discountedPrice(r);
+				r.setTotalPrice(finalPrice);
+			}
+			income += r.getTotalPrice();
 		}
 		return income;
 	}
@@ -307,6 +323,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				System.out.println("예약이 가능하지 않은 객실입니다.");
 			}
 
+			int finalPrice = discountedPrice(reservation);
+			reservation.setTotalPrice(finalPrice);
+			
 			if (r.getResNum() == resNum) {
 				reservations.set(count, reservation);
 				System.out.println("예약 정보가 업데이트되었습니다: " + reservation.getResNum());
@@ -428,11 +447,36 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 	@Override
 	public void setDiscount(int roomNum, LocalDate start, LocalDate end, double discountRate) {
-		for (Room r : rooms) {
-			if (r.getRoomNum() == roomNum) {
-
+		boolean flag = true;
+		for(Room r : rooms) {
+			if(r.getRoomNum() == roomNum) {
+				flag = false;
 			}
 		}
+		
+		if(flag) {
+			System.out.println("없는 방번호 입니다.");
+			return;
+		}
+		
+		roomDiscount.put(roomNum, new DiscountnInfo(start, end, discountRate));
+		System.out.println(roomNum + "방의 할인이 적용되었습니다.");
+	}
+	
+	private int discountedPrice(Reservation re) {
+		int basePrice = re.getResRoom().getPrice();
+		int days = re.getCheckOut().getDayOfMonth() - re.getCheckIn().getDayOfMonth();
+		double discount = 0.0;
+		
+		DiscountnInfo info = roomDiscount.get(re.getResRoom().getRoomNum());
+		
+		if(info != null) {
+			boolean over = !(re.getCheckOut().isBefore(info.start) || re.getCheckIn().isAfter(info.end));
+			if(over) {
+				discount = info.rate;
+			}
+		}
+		return (int) (basePrice * days * (1 - discount));
 	}
 	
 	/**
@@ -450,13 +494,16 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	}
 
 	/**
+
 	 * 객실의 중복예약을 방지하는 기능
 	 * 백준 1374강의실 문제를 활용한 풀이 예약 시스템에 중복 예약을 방지하는 알고리즘 적용
 	 * @param roomNum 객실번호
 	 * @param checkIn 체크인날짜
 	 * @param checkOut 체크아웃날짜
+	 * 백준 1374강의실 문제를 활용한 풀이 예약 시스템에 중복 예약을 방지하는 알고리즘 적용
 	 */
-	private boolean isDateOverlap(int roomNum, LocalDate checkIn, LocalDate checkOut) {
+	 private boolean isDateOverlap(int roomNum, LocalDate checkIn, LocalDate checkOut) {
+
 		for (Reservation r : reservations) {
 			if (r.getResRoom().getRoomNum() == roomNum) {
 				if (r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn)) {
@@ -467,4 +514,15 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		return false;
 	}
 
+	private static class DiscountnInfo {
+		LocalDate start;
+		LocalDate end;
+		double rate;
+
+		DiscountnInfo(LocalDate start, LocalDate end, double rate){
+			this.start = start;
+			this.end = end;
+			this.rate =rate;
+		}
+	}
 }
