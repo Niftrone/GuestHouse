@@ -11,6 +11,7 @@ public class Reservation {
 	private LocalDate checkOut;
 	private Room resRoom;
 	private Employee employee;
+	private int totalPrice;
 
 	public Reservation() {
 
@@ -64,11 +65,19 @@ public class Reservation {
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
 	}
+	
+	public int getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(int totalPrice) {
+		this.totalPrice = totalPrice;
+	}
 
 	@Override
 	public String toString() {
-		return "Resrvation [resNum=" + resNum + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", resRoom="
-				+ resRoom + ", employee=" + employee + "]";
+		return "Reservation [resNum=" + resNum + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", resRoom="
+				+ resRoom + ", employee=" + employee.getName() + ", totalPrice=" + totalPrice + "]";
 	}
 	
 }

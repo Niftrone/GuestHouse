@@ -21,6 +21,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	private List<Employee> employees;
 	private List<Room> rooms;
 	private List<Reservation> reservations;
+	private Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
 
 	private int empCapacity = Employee.empCapacity;
 	private int empCount;
@@ -65,14 +66,14 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			System.out.println("직원 최대 고용");
 			return;
 		}
-
+		empCount ++;
 		employees.add(employee);
 		System.out.println("직원 등록 완료");
 	}
 
 	@Override
 	public void addReservation(Reservation reservation) {
-
+		
 		if (isRoomUnderMaintenance(reservation.getResRoom(), reservation.getCheckIn(), reservation.getCheckOut())) {
 			System.out.println("해당 방은 공사중입니다.");
 			return;
@@ -90,6 +91,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				return;
 			}
 		}
+		
+		int finalPrice = discountedPrice(reservation);
+		reservation.setTotalPrice(finalPrice);
 
 		reservations.add(reservation);
 		System.out.println("예약 완료되었습니다.");
@@ -99,28 +103,32 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	/**
 	 * R
 	 */
-	
+
 	public List<Employee> getAllEmployees() {
-	    if (employees.isEmpty()) {
-	        System.out.println("등록된 직원이 없습니다.");
-	    } 
-	    return employees;
+		if (employees.isEmpty()) {
+			System.out.println("등록된 직원이 없습니다.");
+		}
+		return employees;
 	}
 
 	public List<Room> getAllRooms() {
-	    if (rooms.isEmpty()) {
-	        System.out.println("등록된 방이 없습니다.");
-	    }
-	    return rooms;
+		if (rooms.isEmpty()) {
+			System.out.println("등록된 방이 없습니다.");
+		}
+		return rooms;
 	}
-	
+
 	@Override
 	public int getIncome(int month) {
 		List<Reservation> allRes = getReservation(month);
 		int income = 0;
+		
 		for (Reservation r : allRes) {
-			int price = (r.getCheckOut().getDayOfMonth() - r.getCheckIn().getDayOfMonth()) * r.getResRoom().getPrice();
-			income += price;
+			if(r.getTotalPrice() == 0) {
+				int finalPrice = discountedPrice(r);
+				r.setTotalPrice(finalPrice);
+			}
+			income += r.getTotalPrice();
 		}
 		return income;
 	}
@@ -156,16 +164,16 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	@Override
 	public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
 		List<Room> room = new ArrayList<>();
-		
+
 		int count = 0;
-		for(Reservation r : reservations) {
-			if( !(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
+		for (Reservation r : reservations) {
+			if (!(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
 				room.add(rooms.get(count));
 				System.out.println("추가");
 			}
-			count ++;
+			count++;
 		}
-		
+
 		return room;
 	}
 
@@ -226,6 +234,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				System.out.println("예약이 가능하지 않은 방입니다.");
 			}
 
+			int finalPrice = discountedPrice(reservation);
+			reservation.setTotalPrice(finalPrice);
+			
 			if (r.getResNum() == resNum) {
 				reservations.set(count, reservation);
 				System.out.println("예약 정보가 업데이트되었습니다: " + reservation.getResNum());
@@ -262,7 +273,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		}
 
 		for (int i = 0; employees.size() > i; i++) {
-			if (rooms.get(i).getRoomNum() == empNum) {
+			if (employees.get(i).getEmpNum() == empNum) {
 				employees.set(i, employee);
 				System.out.println("직원 정보가 업데이트되었습니다: " + employee.getName());
 				return;
@@ -322,11 +333,36 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 	@Override
 	public void setDiscount(int roomNum, LocalDate start, LocalDate end, double discountRate) {
-		for (Room r : rooms) {
-			if (r.getRoomNum() == roomNum) {
-
+		boolean flag = true;
+		for(Room r : rooms) {
+			if(r.getRoomNum() == roomNum) {
+				flag = false;
 			}
 		}
+		
+		if(flag) {
+			System.out.println("없는 방번호 입니다.");
+			return;
+		}
+		
+		roomDiscount.put(roomNum, new DiscountnInfo(start, end, discountRate));
+		System.out.println(roomNum + "방의 할인이 적용되었습니다.");
+	}
+	
+	private int discountedPrice(Reservation re) {
+		int basePrice = re.getResRoom().getPrice();
+		int days = re.getCheckOut().getDayOfMonth() - re.getCheckIn().getDayOfMonth();
+		double discount = 0.0;
+		
+		DiscountnInfo info = roomDiscount.get(re.getResRoom().getRoomNum());
+		
+		if(info != null) {
+			boolean over = !(re.getCheckOut().isBefore(info.start) || re.getCheckIn().isAfter(info.end));
+			if(over) {
+				discount = info.rate;
+			}
+		}
+		return (int) (basePrice * days * (1 - discount));
 	}
 
 	private boolean isRoomUnderMaintenance(Room room, LocalDate start, LocalDate end) {
@@ -338,9 +374,8 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	}
 
 	/**
-	 * 백준 1374강의실 문제를 활용한 풀이
-	 * 예약 시스템에 중복 예약을 방지하는 알고리즘 적용 
-	 * */
+	 * 백준 1374강의실 문제를 활용한 풀이 예약 시스템에 중복 예약을 방지하는 알고리즘 적용
+	 */
 	private boolean isDateOverlap(int roomNum, LocalDate start, LocalDate end) {
 		for (Reservation r : reservations) {
 			if (r.getResRoom().getRoomNum() == roomNum) {
@@ -352,4 +387,15 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		return false;
 	}
 
+	private static class DiscountnInfo {
+		LocalDate start;
+		LocalDate end;
+		double rate;
+
+		DiscountnInfo(LocalDate start, LocalDate end, double rate){
+			this.start = start;
+			this.end = end;
+			this.rate =rate;
+		}
+	}
 }
