@@ -48,14 +48,14 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 	private List<Reservation> reservations;
 
-	
+	/**
+	 * GuestHouse의 할인정보를 담는 Map
+	 */
+	private Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
+
 	/**
 	 * GuestHouse의 직원수를 5명으로 제한하기 위한 static 변수
 	 */
-
-	private Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
-
-
 	private int empCapacity = Employee.empCapacity;
 	
 	/**
@@ -248,9 +248,6 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 			String type = r.getResRoom().getType();
 			typeCountMap.put(type, typeCountMap.getOrDefault(type, 0) + 1);
 		}
-//		
-//	    List<String> sortedTypes = new ArrayList<>(roomTypes);
-//	    sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
 
 		return typeCountMap;
 	}
@@ -269,7 +266,6 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		for (Reservation r : reservations) {
 			if (!(r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn))) {
 				room.add(rooms.get(count));
-				System.out.println("추가");
 			}
 			count++;
 		}
@@ -352,6 +348,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		for (Room r : rooms) {
 			if (r.getRoomNum() == roomNum) {
 				System.out.println(roomNum + "번 객실이 변경 되었습니다.");
+				System.out.println("방의 타입이"+newType+" 로 변경되었습니다.");
 				r.setType(newType);
 				return;
 			}
@@ -463,6 +460,11 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		System.out.println(roomNum + "방의 할인이 적용되었습니다.");
 	}
 	
+	/**
+	 * 할인가격을 적용하는기능
+	 * @param re 예약정보
+	 * @return int 할인된가격
+	 */
 	private int discountedPrice(Reservation re) {
 		int basePrice = re.getResRoom().getPrice();
 		int days = re.getCheckOut().getDayOfMonth() - re.getCheckIn().getDayOfMonth();
@@ -513,7 +515,9 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		}
 		return false;
 	}
-
+	 /**
+	  * 할인가격정보를 일시적으로 적용하는 내부 클래스
+	  */
 	private static class DiscountnInfo {
 		LocalDate start;
 		LocalDate end;

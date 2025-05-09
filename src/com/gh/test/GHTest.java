@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.gh.service.impl.GuestHouseServiceImpl;
@@ -33,12 +35,13 @@ public class GHTest {
 		System.out.println("게스트 하우스 관리를 진행합니다.\n");
 		while (flag) {
 			System.out.println(
-				    "1: 직원 추가\t\t2: 방 추가\t\t3: 예약 추가\n" +
+				    "1: 직원 추가\t2: 방 추가\t3: 예약 추가\n" +
 				    "4: 방 할인 적용\t5: 전체 예약 조회\t6: 전체 방 조회\n" +
 				    "7: 전체 직원 조회\t8: 특정 월 예약 조회\t9: 예약 가능한 방 조회\n" +
-				    "10: 예약 정보 수정\t11: 방 타입 수정\t12: 직원 정보 수정\n" +
-				    "13: 특정 월 매출 조회\t14: 유지보수 예약\t15: 예약 취소\n" +
-				    "16: 방 삭제\t\t17: 직원 삭제\n" +
+				    "10: 인기타입 조회\t"+"11: 예약 정보 수정\t12: 방 타입 수정\n"+
+				    "13: 직원 정보 수정\t" +"14: 특정 월 매출 조회\t15: 유지보수 예약\n"+
+				    "16: 예약 취소\t" +"17: 방 삭제\t18: 직원 삭제\n"+
+				    "19: 텍스트파일에 데이터추가\n"+
 				    "0: 종료"
 				);
 			switch (scan.nextInt()) {
@@ -71,28 +74,34 @@ public class GHTest {
 				getAvailabRooms();
 				break;
 			case 10:
-				updateReservation();
+				getPopularRoomTypes();
 				break;
 			case 11:
-				updateRoomType();
+				updateReservation();
 				break;
 			case 12:
-				updateEmployeeInfo();
+				updateRoomType();
 				break;
 			case 13:
-				getIncome(5);
+				updateEmployeeInfo();
 				break;
 			case 14:
-				setMaintenance();
+				getIncome(5);
 				break;
 			case 15:
-				cancelReservation();
+				setMaintenance();
 				break;
 			case 16:
-				removeRoom();
+				cancelReservation();
 				break;
 			case 17:
+				removeRoom();
+				break;
+			case 18:
 				removeEmployee();
+				break;
+			case 19:
+				addFileWriter();
 				break;
 			case 0:
 				flag = false;
@@ -200,29 +209,24 @@ public class GHTest {
 
 	private static void updateRoomType() {
 		service.updateRoomType(105, "Suite");
-		System.out.println("105번 방의 타입이 Suite로 변경되었습니다.");
 	}
 
 	private static void updateEmployeeInfo() {
 		Staff updated = new Staff(2001, LocalDate.of(2021, 3, 15), "이영희", "010-1111-2222", 3000000,
 				Arrays.asList(101, 102));
 		service.updateEmployeeInfo(2001, updated);
-		System.out.println("2001번 직원 정보가 수정되었습니다.");
 	}
 
 	private static void cancelReservation() {
 		service.cancelReservation(5);
-		System.out.println("예약번호 5번 예약이 취소되었습니다.");
 	}
 
 	private static void removeRoom() {
 		service.removeRoom(107);
-		System.out.println("방 번호 107번이 삭제되었습니다.");
 	}
 
 	private static void removeEmployee() {
 		service.removeEmployee(2003);
-		System.out.println("직원 번호 2003번이 삭제되었습니다.");
 	}
 
 	private static void getAllEmployees() {
@@ -240,41 +244,48 @@ public class GHTest {
 			System.out.println(r);
 		}
 	}
+	
+	private static void getPopularRoomTypes() {
+		Map<String, Integer> typeCountMap = service.getPopularRoomTypes();
+		List<String> roomTypes = Arrays.asList("Family", "Single", "Deluxe", "Suite", "Standard");
+	    List<String> sortedTypes = new ArrayList<>(roomTypes);
+	    sortedTypes.sort((t1, t2) -> typeCountMap.get(t2) - typeCountMap.get(t1));
+	    System.out.println(sortedTypes.getFirst()+" type 객실이 가장 인기가 많습니다.");
+	}
 
-	private static void test() throws IOException{
+	private static void addFileWriter() throws IOException{
 		String rootPath = System.getProperty("user.dir");
 		System.out.println(rootPath);
-		File file = new File(rootPath+"\\file.txt");
+		File file = new File(rootPath+"\\GH.txt");
 		if(!file.exists())
 			file.createNewFile();
 		FileWriter fw = new FileWriter(file,true);
-	    System.out.println("사원번호등록 : ");
+	    System.out.print("사원번호등록 : ");
 		int empnum = scan.nextInt();
-		System.out.println("입사일 : ");
+		System.out.print("입사년도 : ");
 		int year = scan.nextInt();
+		System.out.print("입사월 : ");
 		int month = scan.nextInt();
+		System.out.print("입사일 : ");
 		int day = scan.nextInt();
 		LocalDate.of(year, month, day);
-		System.out.println("이름 : ");
+		System.out.print("이름 : ");
 		String name = scan.next();
-		System.out.println("전화번호 : ");
+		System.out.print("전화번호 : ");
 		String phoneNum = scan.next();
-		System.out.println("월급 : ");
+		System.out.print("월급 : ");
 		int salary=scan.nextInt();
-		System.out.println("보너스 : ");
+		System.out.print("보너스 : ");
 		int bonus = scan.nextInt();
-		System.out.println("등급 : ");
+		System.out.print("등급 : ");
 		int grade = scan.nextInt();
 		Manager manager0 = new Manager(empnum, LocalDate.of(year, month, day), name, phoneNum, salary, bonus, grade);
-		System.out.println(manager0);
+		System.out.print(manager0);
 		fw.write(manager0.toString());
 		fw.write("\n");
 		fw.flush();
 		fw.close();
 	}
-	
-	
-
 
 	private static void setDiscount() {
 		service.setDiscount(101, LocalDate.of(2025, 5, 15), LocalDate.of(2025, 5, 30), 0.15);
