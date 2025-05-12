@@ -32,37 +32,37 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	/**
 	 * GuestHouseService를 싱글톤패턴으로 구현
 	 */
-	static public GuestHouseServiceImpl service = new GuestHouseServiceImpl();
+	static private GuestHouseServiceImpl service = new GuestHouseServiceImpl();
 
 	/**
 	 * GuestHouse의 직원정보를 담는 List
 	 */
-	public List<Employee> employees;
+	private List<Employee> employees;
 
 	/**
 	 * GuestHouse의 객실정보를 담는 List
 	 */
-	public List<Room> rooms;
+	private List<Room> rooms;
 
 	/**
 	 * GuestHouse의 예약정보를 담는 List
 	 */
-	public List<Reservation> reservations;
+	private List<Reservation> reservations;
 
 	/**
 	 * GuestHouse의 할인정보를 담는 Map
 	 */
-	public Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
+	private Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
 
 	/**
 	 * GuestHouse의 직원수를 5명으로 제한하기 위한 static 변수
 	 */
-	public int empCapacity = Employee.empCapacity;
+	private int empCapacity = Employee.empCapacity;
 
 	/**
 	 * GuestHouse의 직원수 파악하기 위한 변수
 	 */
-	public int empCount;
+	private int empCount;
 
 	/**
 	 * GuestHouse의 기본생성자
