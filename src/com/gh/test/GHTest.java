@@ -240,7 +240,7 @@ public class GHTest {
 	}
 
 	private static void getAvailabRooms() {
-		List<Room> rooms = service.getAvailableRooms(LocalDate.of(2025, 5, 20), LocalDate.of(2025, 5, 27));
+		List<Room> rooms = service.getAvailableRooms(LocalDate.of(2025, 5, 2), LocalDate.of(2025, 5, 4));
 		rooms.sort(Comparator.comparing(Room::getRoomNum));
 		for (int i = 0; rooms.size() > i; i++) {
 			System.out.println(rooms.get(i));
@@ -252,13 +252,13 @@ public class GHTest {
 	}
 
 	private static void updateReservation() {
-		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 2), LocalDate.of(2025, 5, 4), rooms.get(0),
+		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 18), LocalDate.of(2025, 5, 19), rooms.get(1),
 				empls.get(0));
 		service.updateReservation(1, updated);
 		
 		Reservation updated1 = new Reservation(2, LocalDate.of(2025, 7, 2), LocalDate.of(2025, 7, 4), rooms.get(0),
 				empls.get(0));
-		service.updateReservation(1, updated1);
+		service.updateReservation(2, updated1);
 	}
 
 	private static void updateRoomType() {

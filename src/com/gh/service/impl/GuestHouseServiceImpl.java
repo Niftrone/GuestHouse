@@ -15,6 +15,7 @@ import com.gh.service.RoomService;
 import com.gh.vo.employee.Employee;
 import com.gh.vo.reservation.Reservation;
 import com.gh.vo.room.Room;
+
 /**
  * <pre>
  * {@code
@@ -22,6 +23,7 @@ import com.gh.vo.room.Room;
  * 	해당클래스에서는 Java Document주석을 달아서 처리했다
  * }
  * </pre>
+ * 
  * @author 강민기,이우진,함동윤
  * @version project version 1.0
  * @since JDK17
@@ -186,7 +188,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 */
 	@Override
 	public List<Reservation> getReservation() throws NotFoundException {
-		if (reservations == null) {
+		if (reservations.isEmpty()) {
 			throw new NotFoundException("등록된 예약이 없습니다.");
 		}
 		return reservations;
@@ -205,11 +207,11 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 				result.add(r);
 			}
 		}
-		
-		if(result.isEmpty()) {
+
+		if (result.isEmpty()) {
 			System.out.println(month + "월에 해당하는 예약이 없습니다.");
 		}
-		
+
 		return result;
 	}
 
@@ -337,7 +339,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		for (Reservation r : reservations) {
 
 			if (isDateOverlap(reservation.getResRoom().getRoomNum(), reservation.getCheckIn(),
-					reservation.getCheckOut())) {
+					reservation.getCheckOut(), reservation.getResNum())) {
 				System.out.println("예약이 가능하지 않은 객실입니다.");
 				return;
 			}
@@ -347,7 +349,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 
 			if (r.getResNum() == resNum) {
 				reservations.set(count, reservation);
-				System.out.println(reservation.getResNum() +"번의 예약 정보가 업데이트되었습니다: " );
+				System.out.println(reservation.getResNum() + "번의 예약 정보가 업데이트되었습니다");
 				return;
 			}
 
@@ -477,6 +479,7 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 		for (Room r : rooms) {
 			if (r.getRoomNum() == roomNum) {
 				flag = false;
+				break;
 			}
 		}
 
@@ -535,8 +538,21 @@ public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService
 	 * @param checkOut 체크아웃날짜 백준 1374강의실 문제를 활용한 풀이 예약 시스템에 중복 예약을 방지하는 알고리즘 적용
 	 */
 	private boolean isDateOverlap(int roomNum, LocalDate checkIn, LocalDate checkOut) {
-
 		for (Reservation r : reservations) {
+			if (r.getResRoom().getRoomNum() == roomNum) {
+				if (r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean isDateOverlap(int roomNum, LocalDate checkIn, LocalDate checkOut, int oneself) {
+		for (Reservation r : reservations) {
+			if (r.getResNum() == oneself) {
+				continue;
+			}
 			if (r.getResRoom().getRoomNum() == roomNum) {
 				if (r.getCheckIn().isBefore(checkOut) && r.getCheckOut().isAfter(checkIn)) {
 					return true;
