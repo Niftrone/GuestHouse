@@ -1,19 +1,5 @@
 package com.gh.service.impl;
 
-/**
- * <pre>
- * {@code
- * 	GuestHouseService 클래스는 GuestHouse 정보를 활용하여 각각의 기능을 구현하는 클래스
- * 	해당클래스에서는 Java Document주석을 달아서 처리했다
- * }
- * </pre>
- * @author 강민기,이우진,함동윤
- * @version project version 1.0
- * @since JDK17
- * 
- */
-
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,43 +15,54 @@ import com.gh.service.RoomService;
 import com.gh.vo.employee.Employee;
 import com.gh.vo.reservation.Reservation;
 import com.gh.vo.room.Room;
-
+/**
+ * <pre>
+ * {@code
+ * 	GuestHouseService 클래스는 GuestHouse 정보를 활용하여 각각의 기능을 구현하는 클래스
+ * 	해당클래스에서는 Java Document주석을 달아서 처리했다
+ * }
+ * </pre>
+ * @author 강민기,이우진,함동윤
+ * @version project version 1.0
+ * @since JDK17
+ * 
+ */
 public class GuestHouseServiceImpl implements GuestHouseService, EmployeeService, RoomService {
 
 	/**
 	 * GuestHouseService를 싱글톤패턴으로 구현
 	 */
-	static private GuestHouseServiceImpl service = new GuestHouseServiceImpl();
+	static public GuestHouseServiceImpl service = new GuestHouseServiceImpl();
 
 	/**
 	 * GuestHouse의 직원정보를 담는 List
 	 */
-	private List<Employee> employees;
+	public List<Employee> employees;
 
 	/**
 	 * GuestHouse의 객실정보를 담는 List
 	 */
-	private List<Room> rooms;
+	public List<Room> rooms;
 
 	/**
 	 * GuestHouse의 예약정보를 담는 List
 	 */
-	private List<Reservation> reservations;
+	public List<Reservation> reservations;
 
 	/**
 	 * GuestHouse의 할인정보를 담는 Map
 	 */
-	private Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
+	public Map<Integer, DiscountnInfo> roomDiscount = new HashMap<>();
 
 	/**
 	 * GuestHouse의 직원수를 5명으로 제한하기 위한 static 변수
 	 */
-	private int empCapacity = Employee.empCapacity;
+	public int empCapacity = Employee.empCapacity;
 
 	/**
 	 * GuestHouse의 직원수 파악하기 위한 변수
 	 */
-	private int empCount;
+	public int empCount;
 
 	/**
 	 * GuestHouse의 기본생성자
