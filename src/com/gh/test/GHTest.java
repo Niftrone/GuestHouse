@@ -240,11 +240,9 @@ public class GHTest {
 	}
 
 	private static void getAvailabRooms() {
-		List<Room> rooms = service.getAvailableRooms(LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13));
-		rooms.sort(Comparator.comparing(Room::getRoomNum));
-		for (int i = 0; rooms.size() > i; i++) {
-			System.out.println(rooms.get(i));
-		}
+		service.getAvailableRooms(LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13)).stream()
+		.sorted(Comparator.comparing(Room::getRoomNum))
+		.forEach(System.out::println);
 	}
 
 	private static void setMaintenance() {
@@ -295,11 +293,9 @@ public class GHTest {
 
 	private static void getAllRooms() {
 		try {
-			List<Room> rooms = service.getAllRooms();
-			rooms.sort(Comparator.comparing(Room::getRoomNum));
-			for (Room r : rooms) {
-				System.out.println(r);
-			}
+			service.getAllRooms().stream()
+			.sorted(Comparator.comparing(Room::getRoomNum))
+			.forEach(System.out::println);
 		} catch (NotFoundException e) {
 			System.out.println(e.getMessage());
 		}
