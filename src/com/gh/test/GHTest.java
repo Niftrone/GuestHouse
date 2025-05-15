@@ -243,6 +243,7 @@ public class GHTest {
 		service.getAvailableRooms(LocalDate.of(2025, 5, 10), LocalDate.of(2025, 5, 13)).stream()
 		.sorted(Comparator.comparing(Room::getRoomNum))
 		.forEach(System.out::println);
+
 	}
 
 	private static void setMaintenance() {
@@ -250,10 +251,13 @@ public class GHTest {
 	}
 
 	private static void updateReservation() {
-		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 2), LocalDate.of(2025, 5, 4), rooms.get(0),
+		Reservation updated = new Reservation(1, LocalDate.of(2025, 5, 18), LocalDate.of(2025, 5, 19), rooms.get(1),
 				empls.get(0));
 		service.updateReservation(1, updated);
-		System.out.println("예약이 성공적으로 수정되었습니다.");
+		
+		Reservation updated1 = new Reservation(2, LocalDate.of(2025, 7, 2), LocalDate.of(2025, 7, 4), rooms.get(0),
+				empls.get(0));
+		service.updateReservation(2, updated1);
 	}
 
 	private static void updateRoomType() {
@@ -336,7 +340,7 @@ public class GHTest {
 		System.out.print("등급 : ");
 		int grade = scan.nextInt();
 		Manager manager0 = new Manager(empnum, LocalDate.of(year, month, day), name, phoneNum, salary, bonus, grade);
-		System.out.print(manager0);
+		System.out.println(manager0);
 		fw.write(manager0.toString());
 		fw.write("\n");
 		fw.flush();
